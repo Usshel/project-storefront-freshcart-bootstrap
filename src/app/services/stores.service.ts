@@ -16,9 +16,9 @@ export class StoresService {
     return this._httpClient.get<StoreModel>(`https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-stores/${id}`);
   }
 
-  getAllStoreTags(): Observable<Record <number, StoreTagModel>> {
+  getAllStoreTags(): Observable<Record <string, StoreTagModel>> {
     return this._httpClient.get<StoreTagModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-store-tags').pipe(
-      map((tags) => tags.reduce((a,c) =>({...a,[c.id]: c}),{} as Record <number, StoreTagModel>)  )
+      map((tags) => tags.reduce((a,c) =>({...a,[c.id]: c}),{} as Record <string, StoreTagModel>)  )
     )
   }
 }
