@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ProductModel } from '../models/freshcart-products.model';
+import { StoreTagModel } from '../models/store-tags.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
@@ -10,5 +11,10 @@ export class ProductsService {
 
   getAllFreshCartProducts(): Observable<ProductModel[]> {
     return this._httpClient.get<ProductModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-products');
+  } 
+  getAllStoreTags(): Observable<Record <number, StoreTagModel>> {
+    return this._httpClient.get<StoreTagModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-store-tags').pipe(
+      map((tags) => tags.reduce((a,c) =>({...a,[c.id]: c}),{} as Record <number, StoreTagModel>)  )
+    )
   }
 }
