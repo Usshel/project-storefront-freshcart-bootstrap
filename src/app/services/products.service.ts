@@ -12,9 +12,4 @@ export class ProductsService {
   getAllFreshCartProducts(): Observable<ProductModel[]> {
     return this._httpClient.get<ProductModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-products');
   } 
-  getAllStoreTags(): Observable<Record <number, StoreTagModel>> {
-    return this._httpClient.get<StoreTagModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-store-tags').pipe(
-      map((tags) => tags.reduce((a,c) =>({...a,[c.id]: c}),{} as Record <number, StoreTagModel>)  )
-    )
-  }
 }
