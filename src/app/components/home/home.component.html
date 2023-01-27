@@ -1,0 +1,74 @@
+<!-- Shops by Category -->
+<section class="my-lg-14 my-8">            
+    <div class="container">
+        <div class="row">
+        <div class="col-12">    
+            <div class="mb-4">            
+                <h3>Shops by categories</h3>    
+            </div>  
+        </div>
+    </div>      
+    <div class="row">          
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xxl-6 g-6">
+                <div *ngFor="let item of categories$ | async" class="col">
+                    <div class="card card-product">    
+                        <div class="card-body text-center py=">      
+                            <div class="text-center position-relative">        
+                                <!-- img -->        
+                                <a>
+                                <img [src]="item.imageUrl"alt="Grocery Ecommerce Template" class="mb-3 img-fluid">
+                                </a>      
+                                </div>  
+                            <!-- title -->      
+                            <h2 class="fs-6">{{item.name}}</h2>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Stores -->
+<section class="my-lg-14 my-8">            
+    <div class="container">                
+        <div class="row">
+            <div class="col-12">
+                <div class="mb-7">
+                    <h3>Stores</h3>
+                </div>
+            </div> 
+        </div>
+        <div *ngIf="stores$ | async as stores" class="mb-5"> 
+            <h5> 
+                We have <span class="text-success"> {{stores.length}} </span> vendors now
+            </h5>
+        </div>
+        <div class="row">
+            <div *ngFor="let store of stores$ | async" class="col-4 col-sm-10 col-lg-4  ">
+                <div class="card flex-row p-8 card-product">
+                    <div>
+                        <!-- store's logo -->
+                        <img [src]="store.logoUrl" [alt]="store" class="rounded-circle icon-shape icon-xl">
+                    </div>
+                    <div class="ms-6">
+                        <h5 class="mb-1">
+                            <a [routerLink]="'stores/'+ store.id" class="text-inherit">{{store.name}}</a>
+                        </h5>
+                        <div class="small text-muted">
+                            <!-- <ng-container *ngFor="let subitem of item.name; last as last">
+                                  
+                            </ng-container>           -->
+                        </div>          
+                        <div>           
+                            <!-- badge -->            
+                            <div class="badge text-bg-light border">{{store.distanceInMeters}} km</div>          
+                        </div>        
+                    </div>      
+                </div>    
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
