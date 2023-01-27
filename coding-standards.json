@@ -42,7 +42,7 @@
       "service": {
         "type": "ANGULAR_SERVICE"
       },
-      "QueryModel": {
+      "querymodel": {
         "type": "DATA_STRUCTURE"
       }
     }
