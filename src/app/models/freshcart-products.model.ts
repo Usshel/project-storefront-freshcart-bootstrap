@@ -1,4 +1,4 @@
-export interface FreshcartProductsModel {
+export interface ProductModel {
   readonly categoryId: string;
   readonly featureValue: number;
   readonly id: string;
