@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ProductModel } from '../models/freshcart-products.model';
-import { StoreTagModel } from '../models/store-tags.model';
+
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
