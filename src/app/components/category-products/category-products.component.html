@@ -1,0 +1,24 @@
+<div *ngFor="let item of categorySite$ | async" class="col">{{item.name}}</div>
+eeeee
+<div *ngFor="let item of  productsSorted$ | async" class="col">{{item.name}} {{item.featureValue}} 
+    price: {{item.price}} $
+    
+    {{item.ratingValue}}</div>
+
+eeee
+<div *ngFor="let item of sort$ | async" class="col">{{item}}</div>
+
+
+
+
+<form [formGroup]="sort">
+    <select class="form-select" type="text" formControlName="sortOption" placeholder="Sort Option">
+        <option *ngFor="let item of sort$ | async" [value]="item">{{item}}</option>
+    </select>
+</form>
+
+
+<form [formGroup]="filterPrice" >
+<input type="text" formControlName="priceFrom" placeholder="Price From">
+<input type="text" formControlName="priceTo" placeholder="Price To">
+</form>
