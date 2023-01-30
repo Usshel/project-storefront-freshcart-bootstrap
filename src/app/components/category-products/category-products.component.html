@@ -1,15 +1,50 @@
-<div *ngFor="let item of categorySite$ | async" class="col">{{item.name}}</div>
-eeeee
+
+
+<h1> STORES </h1>
+<form [formGroup]="searchStore">
+    <input type="text" formControlName="store" placeholder="Store">
+</form>
+<div *ngFor="let item of storesWithSearching$ | async" class="form-check mb-2">
+    <input [id]="item.id" class="form-check-input" type="checkbox">
+    <label [for]="item" class="form-check-label">{{item.name}} {{item.id}}</label>
+</div>
+
+
+
+
+ <h1> ITEMS </h1>
 <div *ngFor="let item of  productsSorted$ | async" class="col">{{item.name}} {{item.featureValue}} 
     price: {{item.price}} $
     
-    {{item.ratingValue}}</div>
+    {{item.ratingValue}}
+</div>
+        <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pages$ | async" ><a  class="page-link">{{item}}</a></li></ul>    </nav>
 
-eeee
-<div *ngFor="let item of sort$ | async" class="col">{{item}}</div>
+    <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pageLimit | async" (click)="onPageChanged(item)" >
+        <a   class="page-link">{{item}}</a></li></ul>  </nav>
 
 
 
+
+
+
+
+
+
+<div *ngFor="let item of categorySite$ | async" class="col">{{item.name}}</div>
+<h1> ITEMS </h1>
+<div *ngFor="let item of  productsSorted$ | async" class="col">{{item.name}} {{item.featureValue}} 
+    price: {{item.price}} $
+    
+    {{item.ratingValue}}
+</div>
+        <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pages$ | async" ><a  class="page-link">{{item}}</a></li></ul>    </nav>
+
+    <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pageLimit | async" (click)="onPageChanged(item)" >
+        <a   class="page-link">{{item}}</a></li></ul>  </nav>
+    
+    
+     <h1> SORTING </h1>
 
 <form [formGroup]="sort">
     <select class="form-select" type="text" formControlName="sortOption" placeholder="Sort Option">
@@ -17,8 +52,20 @@ eeee
     </select>
 </form>
 
+<h1> FITLER PRICE </h1>
 
-<form [formGroup]="filterPrice" >
-<input type="text" formControlName="priceFrom" placeholder="Price From">
-<input type="text" formControlName="priceTo" placeholder="Price To">
+
+<h1> STORES </h1>
+<form [formGroup]="searchStore">
+    <input type="text" formControlName="store" placeholder="Store">
 </form>
+<div *ngFor="let item of storesWithSearching$ | async" class="form-check mb-2">
+    <input [id]="item.id" class="form-check-input" type="checkbox">
+    <label [for]="item" class="form-check-label">{{item.name}} {{item.id}}</label>
+</div>
+
+
+<!-- <small class="text-warning">    
+    <i *ngFor="let val of ratingOptions" class="bi"      [ngClass]="{'bi-star-fill': val === 1, 'bi-star': val === 0, 'bi-star-half': val === 0.5}">
+    </i>  
+</small> -->
