@@ -1,53 +1,90 @@
 <!-- not ready -->
-<section class="my-lg-14 my-8">           
-    <div class="container">                
-        <div class="row">
-            <div class="col-12">
-                <div class="row row-cols-2 row-cols-md-2 row-cols-lg-2 row-cols-xxl-2 g-6 " >
-                    <ng-container *ngIf="store$ | async as item" >
-                        <div class="p-10">    
-                            <div>      
-                                <!-- img -->           
-                                <img [src]="item.logoUrl" 
-                                [alt]="item" 
-                                class="rounded-circle icon-shape icon-xxl">    
-                            </div>    
-                            <!-- heading -->    
-                            <div class="mt-4">      
-                                <h1 class="mb-1 h4">{{item.name}}</h1>      
-                                <div class="small text-muted">       
-                                    <span>It is only {{item.distanceInMeters}} km away from you!</span>      
-                                </div>   
-                            </div>  
+<ng-container *ngIf="store$ | async as item">
+    <section class="my-lg-14 my-8">           
+        <div class="container">                
+            <div class="row">
+                <div class="col-12 col-md-3 p-6">
+                    <div class="d-flex flex-column" >
+                        <div>
+                            <img [src]="item.logoUrl" 
+                                    [alt]="item" 
+                                    class="rounded-circle icon-shape icon-xxl">
                         </div>
-                    </ng-container>
-                    <ng-container *ngIf="store$ | async as item">
-                        <div class="mb-4 bg-light d-lg-flex justify-content-between align-items-center rounded">
-                                <!-- card -->      
-                            <div class="card mb-4 bg-light border-0">        
-                                    <!-- card body -->        
-                                <div class="card-body p-9">          
-                                    <h2 class="mb-0 fs-1">{{item.name}}</h2>        
-                                </div>
-                                <div class="row-2" >
-                                    <!-- form -->
-                                    <form [formGroup]="search" (ngSubmit)="onSearchSubmitted(search)">
-                                        <input type="text" formControlName="productSearch" placeholder="Product Search">
-                                        <input type="submit" value="Submit">
-                                    </form>
-                                </div>      
+                        <div class="mt-4" >
+                            <h1 class="mb-1 h4">{{item.name}}</h1> 
+                            <div class="small text-muted">
+                                <span>It is only {{item.distanceInMeters}} km away from you!</span>
                             </div>
                         </div>
-                    </ng-container>
+                    </div>
                 </div>
+                <div class="mb-4 bg-light d-lg-flex justify-content-between align-items-center rounded col-12 col-md-9">
+                    <div class="align-self-center p-8">
+                        <div class="mb-3" >
+                            <h5 class="mb-0 fw-bold"> {{item.name}} </h5>
+                                <p class="mb-0 text-muted"> 
+                                    Whatever the occasion, we've got you covered.
+                                </p>
+                        </div>
+                            <div class="position-relative">
+                                <form [formGroup]="search">
+                                    <input type="email" class="form-control" formControlName="productSearch" id="exampleFormControlInput1" placeholder="Search E-Grocery Super Market">
+                                </form>
+                                    <span class="position-absolute end-0 top-0 mt-2 me-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                                width="14" 
+                                                height="14" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                stroke-width="2" 
+                                                troke-linecap="round" 
+                                                stroke-linejoin="round" 
+                                                class="feather feather-search">
+                                                <circle cx="11" cy="11" r="8" > </circle>
+                                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+
+                                            </svg>
+                                    </span>
+                            </div>
+                    </div>
+                                    <!-- card -->      
+                                <div class="card mb-4 bg-light border-0">        
+                                        <!-- card body -->        
+                                    <div class="card-body p-9">          
+                                         <img src="../assets/images/svg-graphics/store-graphics.svg" class="img-fluid">
+                                    </div>
+                                    <div class="row-2" >
+                                        <!-- form -->
+                                        
+                                    </div>      
+                                </div>
+                </div>     
+            </div>
+        </div>
+    </section>
+</ng-container>
+
+<section class="my-lg-14 my-8">            
+    <div class="container">                
+        <div class="col-12 mb-6">
+            <h3>E-Grocery Super Market products:</h3>
+        </div>
+        <div class="row row-cols-2 row-cols-xl-6 row-cols-md-3 g-4">
+            <div class="col" *ngFor="let product of products$ | async">
+                <a>
+                   <div class="card-body text-center py-4">
+                        <img [src]="product.imageUrl">
+                        <div class="text-truncate">
+                            {{product.name}}
+                        </div>
+                   </div> 
+                </a>
             </div>
         </div>
     </div>
 </section>
 
-
-
-<div *ngFor="let item of products$ | async" class="col">{{item.id}} {{item.name}} </div>
 
 
 
