@@ -11,6 +11,8 @@ import { ProductsService } from '../../services/products.service';
 import { StoresService } from '../../services/stores.service';
 import { StoreParamsQuerymodel } from 'src/app/querymodels/store-params.querymodel';
 import { PagedataQuerymodel } from 'src/app/querymodels/pagedata.querymodel';
+import { start } from 'repl';
+import { setFlagsFromString } from 'v8';
 @Component({
   selector: 'app-category-products',
   styleUrls: ['./category-products.component.scss'],
@@ -29,7 +31,7 @@ export class CategoryProductsComponent {
   readonly filterPrice: FormGroup = new FormGroup({ priceFrom: new FormControl(), priceTo: new FormControl() });
 
   //page limit
-  readonly pageLimit: Observable<number[]> = of ([5, 10, 15])
+  readonly pageLimit$: Observable<number[]> = of ([5, 10, 15])
 
   readonly pageData$: Observable<PagedataQuerymodel> = 
   this._activatedRoute.queryParams.pipe(
@@ -85,7 +87,7 @@ export class CategoryProductsComponent {
     this._productsService.getAllFreshCartProducts(),
     this.categoryIdParams$,
   ]).pipe(map(([products, categoryParsId]) =>
-    products.filter((product) => product.categoryId == categoryParsId)
+    products.filter((product) => product.categoryId == categoryParsId).map((products) => )
   ));
 
   //Products SortedAndFilteredByPrice
@@ -152,5 +154,48 @@ export class CategoryProductsComponent {
     ).subscribe()
   }
 
-}
+  onPageSizeChanged(Size: number): void {
+    combineLatest([
+      this.pageData$,
+      this.productsSorted$
+    ]).pipe( take(1),
+      tap(([params, products]) => {
+        this._router.navigate([], {
+          queryParams: {
+            pageNumber: Math.min(
+              Math.ceil(products.length / Size), params.pageNumber
+            ) ,
+            pageSize: Size
 
+          }
+        })
+      })
+    ).subscribe()
+
+  }
+  stars(rating: number): number[] {
+    let starsArr = [];
+    
+      for (let i = 1; i <= 5; i++){
+        Math.floor(rating) >= i ? starsArr.push(1) :
+        Math.ceil(rating) >= i ? starsArr.push(0.5) : starsArr.push(0)
+       }
+    return starsArr
+    
+  }
+
+
+
+
+}
+ 
+
+
+
+/* [ngClass]="{'bi-star-fill': val === 1, 'bi-star': val === 0, 'bi-star-half': val === 0.5}"
+    5 stars - possible: 1, 0, 0.5;
+    have to return array with 5 elements ex[1,1,1,0.5,0]
+    if  val>0 && val< 1 return 0,5
+    if  val === 1 return 1 if val===0 return 0
+
+*/
