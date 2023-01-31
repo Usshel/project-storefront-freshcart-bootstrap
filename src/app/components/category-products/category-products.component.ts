@@ -1,18 +1,17 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, combineLatest, of } from 'rxjs';
+import { Observable, combineLatest, from, of } from 'rxjs';
 import { debounceTime, filter, map, shareReplay, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { PagedataQuerymodel } from '../../querymodels/pagedata.querymodel';
 import { CategoryModel } from '../../models/freshcart-categories.model';
 import { StoreModel } from '../../models/freshcart-stores.model';
-import { ProductModel } from '../../models/freshcart-products.model';
+import { ProductWithStarsQuerymodel } from '../../querymodels/product-with-stars.querymodel';
 import { CategoriesService } from '../../services/categories.service';
 import { ProductsService } from '../../services/products.service';
 import { StoresService } from '../../services/stores.service';
-import { StoreParamsQuerymodel } from 'src/app/querymodels/store-params.querymodel';
-import { PagedataQuerymodel } from 'src/app/querymodels/pagedata.querymodel';
-import { start } from 'repl';
-import { setFlagsFromString } from 'v8';
+import { ProductModel } from '../../models/freshcart-products.model';
+
 @Component({
   selector: 'app-category-products',
   styleUrls: ['./category-products.component.scss'],
@@ -31,18 +30,18 @@ export class CategoryProductsComponent {
   readonly filterPrice: FormGroup = new FormGroup({ priceFrom: new FormControl(), priceTo: new FormControl() });
 
   //page limit
-  readonly pageLimit$: Observable<number[]> = of ([5, 10, 15])
+  readonly pageLimit$: Observable<number[]> = of([5, 10, 15])
 
-  readonly pageData$: Observable<PagedataQuerymodel> = 
-  this._activatedRoute.queryParams.pipe(
-    map((params) => {
-      return {
-        pageNumber: params['pageNumber'] ? +params['pageNumber'] : 1,
-        pageSize: params['pageSize'] ? +params['pageSize'] : 5
-      };
-    })
-  )
-  
+  readonly pageData$: Observable<PagedataQuerymodel> =
+    this._activatedRoute.queryParams.pipe(
+      map((params) => {
+        return {
+          pageNumber: params['pageNumber'] ? +params['pageNumber'] : 1,
+          pageSize: params['pageSize'] ? +params['pageSize'] : 5
+        };
+      })
+    )
+
   //all categories
   readonly categories$: Observable<CategoryModel[]> =
     this._categoriesService.getAllFreshCartCategories().pipe(
@@ -66,44 +65,43 @@ export class CategoryProductsComponent {
     categories.filter(category => category.id == categoryParamsId)))
 
 
-  // all stores searching 
+  // all stores with searching 
   readonly storesWithSearching$: Observable<StoreModel[]> = combineLatest([
     this._storesService.getAllFreshCartStores(),
     this.searchStore.valueChanges
       .pipe(debounceTime(1000),
-      startWith(''))
+        startWith(''))
   ]).pipe(
-    map(([stores, searchStore]) => stores.filter((store) =>  
-    searchStore.store ?
-     store.name.toLowerCase().includes(searchStore.store.toLowerCase()) :
-    store.name.toLowerCase().includes('')
+    map(([stores, searchStore]) => stores.filter((store) =>
+      searchStore.store ?
+        store.name.toLowerCase().includes(searchStore.store.toLowerCase()) :
+        store.name.toLowerCase().includes('')
     ))
   );
 
 
-
-  //all Products by Category
-  readonly products$: Observable<ProductModel[]> = combineLatest([
+  //all Products by Category With Stars
+  readonly products$: Observable<ProductWithStarsQuerymodel[]> = combineLatest([
     this._productsService.getAllFreshCartProducts(),
     this.categoryIdParams$,
   ]).pipe(map(([products, categoryParsId]) =>
-    products.filter((product) => product.categoryId == categoryParsId).map((products) => )
+    products.filter((product) => product.categoryId == categoryParsId).map((product) => this.mapProductsToQueryWithStars(product))
   ));
 
   //Products SortedAndFilteredByPrice
-  readonly productsSorted$: Observable<ProductModel[]> = combineLatest([
+  readonly productsSorted$: Observable<ProductWithStarsQuerymodel[]> = combineLatest([
     this.products$,
     this.sort.valueChanges.pipe(
       startWith('')),
     this.filterPrice.valueChanges.pipe(
-      debounceTime(3000),
+      debounceTime(2000),
       startWith(
         { priceFrom: 1, priceTo: 1000 }
 
       )),
-      this.pageData$
+    this.pageData$
   ]).pipe(
-    map(([products, sortForm, priceF,params]) =>
+    map(([products, sortForm, priceF, params]) =>
       products.filter(product =>
         priceF.priceFrom && priceF.priceTo ? product.price >= priceF.priceFrom && product.price < priceF.priceTo :
           priceF.priceFrom ? product.price >= priceF.priceFrom :
@@ -123,24 +121,24 @@ export class CategoryProductsComponent {
           }
           return 0
         }
-        ).slice((params.pageNumber - 1)* params.pageSize, params.pageSize * params.pageSize)
+        ).slice((params.pageNumber - 1) * params.pageSize, params.pageNumber * params.pageSize)
     )
   )
 
-  
+
   readonly pages$: Observable<number[]> = combineLatest([
     this.pageData$,
     this.products$
   ]).pipe(map(([params, products]) => {
     return Array.from(
-      Array(Math.ceil(products.length/params.pageSize)).keys()).map((index) => index + 1)
-  } ))
+      Array(Math.ceil(products.length / params.pageSize)).keys()).map((index) => index + 1)
+  }))
 
 
   constructor(private _categoriesService: CategoriesService, private _activatedRoute: ActivatedRoute, private _productsService: ProductsService, private _storesService: StoresService, private _router: Router) {
   }
 
-  onPageChanged(page:number): void{
+  onPageChanged(page: number): void {
     this.pageData$.pipe(
       take(1),
       tap((params) => {
@@ -158,13 +156,13 @@ export class CategoryProductsComponent {
     combineLatest([
       this.pageData$,
       this.productsSorted$
-    ]).pipe( take(1),
+    ]).pipe(take(1),
       tap(([params, products]) => {
         this._router.navigate([], {
           queryParams: {
             pageNumber: Math.min(
               Math.ceil(products.length / Size), params.pageNumber
-            ) ,
+            ),
             pageSize: Size
 
           }
@@ -173,22 +171,43 @@ export class CategoryProductsComponent {
     ).subscribe()
 
   }
+
+  onCategoryChanged(categoryId: string): void {
+    this._router.navigate(['/categories/' + categoryId]), {
+
+    }
+
+  }
+
   stars(rating: number): number[] {
     let starsArr = [];
-    
-      for (let i = 1; i <= 5; i++){
-        Math.floor(rating) >= i ? starsArr.push(1) :
+
+    for (let i = 1; i <= 5; i++) {
+      Math.floor(rating) >= i ? starsArr.push(1) :
         Math.ceil(rating) >= i ? starsArr.push(0.5) : starsArr.push(0)
-       }
+    }
     return starsArr
-    
+
+  }
+  mapProductsToQueryWithStars(product: ProductModel): ProductWithStarsQuerymodel {
+    return {
+      categoryId: product.categoryId,
+      featureValue: product.featureValue,
+      id: product.id,
+      imageUrl: product.imageUrl,
+      name: product.name,
+      price: product.price,
+      ratingCount: product.ratingCount,
+      ratingValue: this.stars(product.ratingValue),
+      storeIds: product.storeIds
+    }
   }
 
 
 
 
 }
- 
+
 
 
 
