@@ -1,71 +1,161 @@
+<ng-container *ngFor=" let category of categorySite$ | async">
+    <section class="my-lg-14 my-8">            
+        <div class="container">                
+            <div class="row">
+                <aside class="col-lg-3 col-sm-3 mb-6 mb-md-0">
+                    <div class="offcanvas-body ps-lg-2 pt-lg-0">
+                        <div class="mb-8">
+                                <div class="col-12">
+                                    <div class="mb-4">
+                                        <h4>Categories</h4>
+                                    </div>
+                                </div>
+                                <ul class="nav nav-category">
+                                    <li *ngFor="let item of categories$ | async" class="nav-item border-bottom w-100">
+                                        <a role="button" class="nav-link" (click)="onCategoryChanged(item.id)">{{item.name}}
+                                            <i class="feather-icon icon-chevron-right"></i>
+                                        </a>
+                                        
+                                    </li>
+                                </ul>
+                                <div>
+                                    <h4>Stores</h4>
+                                    <form [formGroup]="searchStore" class="ng-pristine ng-valid ng-touched">
+                                        <input type="text" formControlName="store" placeholder="Store" class="form-control mb-2 ng-pristine ng-valid ng-touched">
+                                    </form>
+                                    <div *ngFor="let item of storesWithSearching$ | async" 
+                                    class="form-check mb-2"><input
+                                     [id]="item" 
+                                     class="form-check-input" 
+                                     type="checkbox"><label 
+                                     [for]="item" 
+                                     class="form-check-label">{{item.name}}</label></div>
+                                </div>
+                                <div>
+                                    <h4>Price</h4>
+                                        <form [formGroup]="filterPrice" class="ng-pristine ng-valid ng-touched">
+                                            <input type="text" 
+                                            formControlName="priceFrom" 
+                                            placeholder="Price From" 
+                                            class="form-control mb-2 ng-untouched ng-pristine ng-valid">
+                                            <input type="text" 
+                                            formControlName="priceTo" 
+                                            placeholder="Price To" 
+                                            class="form-control mb-2 ng-untouched ng-pristine ng-valid">
+                                        </form>
+                                </div>
+                                <div></div>
+                        </div> 
+                    </div>
+                </aside>
+            
+                <div class="col-12 col-lg-9">
+                    <div class="card mb-4 bg-light border-0">
+                        <div class="card-body p-9">
+                            <h3 class="mb-0 fs-4"> {{category.name}} </h3>
+                        </div>
+                    </div>
+                    <ng-container *ngIf=" productsSorted$ | async as productList ">
+                        <section class="my-lg-14 my-8">            
+                            <div class="container">                
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                                        <div class="mb-4">
+                                            <h6>
+                                            <small class="text-muted">{{productList.length}} products found</small> 
+                                            </h6>
+                                        </div>
+                                        <div class="mb-4">
+                                            <form [formGroup]="sort" >
+                                                <select class="form-select" formControlName="sortOption" >
+                                                <option *ngFor="let item of sort$ | async" [value]="item"
+                                                placeholder="Sort Option">{{item}}</option> 
+                                                </select>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="row g-4 row-cols-1 mt2">
+                                        <div class="col-12">
+                                            <div class="card card-product" *ngFor="let product of productList" >
+                                                <div class="card-body" >
+                                                    <div class="row align-items-center">
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="text-center position-relative">
+                                                                <a>
+                                                                    <img class="mb-3 img-fluid" [src]="product.imageUrl">
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-8 flex-grow-1">
+                                                            <h3 class="fs-6 text-muted">
+                                                                {{category.name}}
+                                                            </h3>
+                                                            <h2 class="fs-6">
+                                                                {{product.name}}
+                                                            </h2>
+                                                            <small class="text-warning">    
+                                                                <i *ngFor="let val of product.ratingValue" class="bi" 
+                                                                [ngClass]="{'bi-star-fill': val === 1, 'bi-star': val === 0, 'bi-star-half': val === 0.5}">
+                                                            </i>  
+                                                            </small>
+                                                            <span class="text-muted small">({{product.ratingCount}})</span>
+                                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                                {{product.price | currency}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- pagination -->
+                                        <div class="d-md-flex justify-content-between align-items-center">
+                
+                                            <div>
+                                                <span> Limit </span>
+                                                <nav>      
+                                                    <ul class="pagination">
+                                                        <li class="page-item" *ngFor="let size of pageLimit$ | async" (click)="onPageSizeChanged(size)">
+                                                            <a class="page-link">{{size}}</a>
+                                                        </li>
+                                                    </ul>    
+                                                </nav>
+                                                
+                                            </div>
+                                            <div>
+                                                <span> Pagination </span>
+                                                <nav>      
+                                                    <ul class="pagination">
+                                                        <li class="page-item" *ngFor="let page of pages$ | async" (click)="onPageChanged(page)">
+                                                            <a class="page-link">{{page}}</a>
+                                                        </li>
+                                                    </ul>    
+                                                </nav>
+                                            </div>
+                                        </div>
+        
+                                    </div>
+                                </div>
+                            </div> 
+                        </section>
+                    </ng-container>
 
+                </div>
+                
+            </div>
+        </div>
+    </section>
+</ng-container>
 
-<h1> STORES </h1>
-<form [formGroup]="searchStore">
-    <input type="text" formControlName="store" placeholder="Store">
-</form>
-<div *ngFor="let item of storesWithSearching$ | async" class="form-check mb-2">
-    <input [id]="item.id" class="form-check-input" type="checkbox">
-    <label [for]="item" class="form-check-label">{{item.name}} {{item.id}}</label>
-</div>
-
-
-
-
- <h1> ITEMS </h1>
-<div *ngFor="let item of  productsSorted$ | async" class="col">{{item.name}} {{item.featureValue}} 
-    price: {{item.price}} $
+   
     
-    {{item.ratingValue}}
-</div>
-        <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pages$ | async" ><a  class="page-link">{{item}}</a></li></ul>    </nav>
-
-    <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pageLimit | async" (click)="onPageChanged(item)" >
-        <a   class="page-link">{{item}}</a></li></ul>  </nav>
 
 
 
 
 
+<!-- page -->
+
+<!-- limit on page -->
 
 
 
-
-<div *ngFor="let item of categorySite$ | async" class="col">{{item.name}}</div>
-<h1> ITEMS </h1>
-<div *ngFor="let item of  productsSorted$ | async" class="col">{{item.name}} {{item.featureValue}} 
-    price: {{item.price}} $
-    
-    {{item.ratingValue}}
-</div>
-        <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pages$ | async" ><a  class="page-link">{{item}}</a></li></ul>    </nav>
-
-    <nav>      <ul class="pagination"><li class="page-item" *ngFor="let item of pageLimit | async" (click)="onPageChanged(item)" >
-        <a   class="page-link">{{item}}</a></li></ul>  </nav>
-    
-    
-     <h1> SORTING </h1>
-
-<form [formGroup]="sort">
-    <select class="form-select" type="text" formControlName="sortOption" placeholder="Sort Option">
-        <option *ngFor="let item of sort$ | async" [value]="item">{{item}}</option>
-    </select>
-</form>
-
-<h1> FITLER PRICE </h1>
-
-
-<h1> STORES </h1>
-<form [formGroup]="searchStore">
-    <input type="text" formControlName="store" placeholder="Store">
-</form>
-<div *ngFor="let item of storesWithSearching$ | async" class="form-check mb-2">
-    <input [id]="item.id" class="form-check-input" type="checkbox">
-    <label [for]="item" class="form-check-label">{{item.name}} {{item.id}}</label>
-</div>
-
-
-<!-- <small class="text-warning">    
-    <i *ngFor="let val of ratingOptions" class="bi"      [ngClass]="{'bi-star-fill': val === 1, 'bi-star': val === 0, 'bi-star-half': val === 0.5}">
-    </i>  
-</small> -->
