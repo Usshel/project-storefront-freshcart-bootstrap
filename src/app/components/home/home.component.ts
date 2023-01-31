@@ -18,7 +18,7 @@ import { CategoryWithProductQuerymodel } from 'src/app/querymodels/category-with
 export class HomeComponent {
   readonly categories$: Observable<CategoryModel[]> = this._categoriesService.getAllFreshCartCategories().pipe(shareReplay(1));
   
-
+  //Observable with Object stores with mapped tags id for tags name
   readonly stores$: Observable<StoreQuerymodel[]> = combineLatest([
     this._storesService.getAllFreshCartStores(),
     this._storesService.getAllStoreTags()
@@ -35,9 +35,10 @@ export class HomeComponent {
       }
       )), shareReplay(1)
   );
-    //5 fruits and Vege id 2 snack and munchies
+    //Featured categories id:5-fruits and Vege, id:2-snack and munchies
     readonly categoriesId$: Observable<string[]> = of(['5','2'])
 
+      //Observable with Objects {name: categroies-name, products by categories id }
   readonly categoriesWithProducts$: Observable<CategoryWithProductQuerymodel[]> = combineLatest([
     this.categories$,
     this.categoriesId$,
@@ -56,7 +57,7 @@ export class HomeComponent {
 
   constructor(private _categoriesService: CategoriesService, private _storesService: StoresService, private _productsService: ProductsService) {
   }
-
+    //method which creates new Objects {name: categroies-name, products by categories id } 
    private _mapToNewCategoryQuery(
     categories:CategoryModel[],
     categoriesId: string[],
